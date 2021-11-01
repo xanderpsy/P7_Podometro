@@ -4,6 +4,7 @@ package com.example.p7_podometro
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -33,26 +34,45 @@ class MainActivity : AppCompatActivity() {
         }
         val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val sensorPasos: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
-        Log.d("Sensor",sensorPasos.toString())
+        val gyre: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        
+       // Log.d("Sensorx",sensorPasos.toString())
+     //   Log.d("Sensorx","Estos es el giroscopio:${gyre.toString()}")
 
-      var pasos: Float = 0.0F
+        var pasos: Float = 0.0F
         val sensorEventListener = object : SensorEventListener {
-
 
             override fun onSensorChanged(sensorEvent: SensorEvent) {
                 pasos += sensorEvent.values[0]
                 binding.tv.text = "pasos: $pasos"
-                Log.d("sensor","Pasos: $pasos")
+               // Log.d("sensor","Pasos: $pasos")
             }
             override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-
             }
-
-
-
         }
 
         sensorManager.registerListener(sensorEventListener, sensorPasos, SensorManager.SENSOR_DELAY_FASTEST)
 
+
+
+        var gyr: Float = 0.0F
+        val sensorEventListener2 = object : SensorEventListener {
+
+            override fun onSensorChanged(sensorEvent: SensorEvent) {
+                sensorEvent.values
+
+                if(sensorEvent.values[0]<0.5f) {
+                    Log.d("Sensorx", "giro2: ${sensorEvent.values[0]}")
+                    binding.cl.setBackgroundColor(Color.CYAN)
+                }
+                if(sensorEvent.values[0]>0.5f){
+                    binding.cl.setBackgroundColor(Color.RED)
+                }
+
+            }
+            override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+            }
+        }
+        sensorManager.registerListener(sensorEventListener2, gyre, SensorManager.SENSOR_DELAY_NORMAL)
     }
 }
